@@ -1,12 +1,12 @@
 function weather() {
 
-  var location = document.getElementById("location");
+  var locationDiv = document.getElementById("location");
   var url = "http://api.openweathermap.org/data/2.5/weather?appid=66b9464186dc63b29a9c52dc1824be83&units=imperial";
 
-  navigator.geolocation.getCurrentPosition(success, error);
+  navigator.geolocation.getCurrentPosition(onGetPosition, onPositionError);
 
   // use the geolocation position coordinates to call the API
-  function success(position) {
+  function onGetPosition(position) {
     console.log(position.coords.latitude);
     console.log(position.coords.longitude);
 
@@ -15,9 +15,11 @@ function weather() {
     console.log(url);
 
     /* AJAX Code */
-    function reqListener () {
+    function whenAjaxIsLoaded () {
       var response = JSON.parse(this.response);
-      console.log(response);
+
+      console.log(this.response, response);
+      
       var temp = document.getElementById('temp');
       temp.innerHTML = response.main.temp + "&deg;";
 
@@ -28,19 +30,19 @@ function weather() {
       loc.innerHTML = 'Lattitude is: ' + response.coord.lat + '<br>' + 'Longitude is: ' +response.coord.lon;
     }
 
-    var oReq = new XMLHttpRequest();
-    oReq.addEventListener("load", reqListener);
-    oReq.open("GET", url);
-    oReq.send();
+    var request = new XMLHttpRequest();
+    request.addEventListener("load", whenAjaxIsLoaded);
+    request.open("GET", url);
+    request.send();
     /* End AJAX Code */
 
   }
 
-  function error() {
-    location.innerHTML = "Unable to retrieve your location";
+  function onPositionError() {
+    locationDiv.innerHTML = "Unable to retrieve your location";
   }
 
-  location.innerHTML = "Locating...";
+  locationDiv.innerHTML = "Locating...";
 }
 
 weather();
